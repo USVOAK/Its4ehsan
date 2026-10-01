@@ -56,6 +56,17 @@ def _client():
         return _cli
     url = os.environ.get("KV_URL", "").strip()
     if not url:
+        # Fallback for hosts where env vars are awkward: first non-comment
+        # line of kv_url.txt in the repo root. Only do this in a PRIVATE repo.
+        try:
+            for line in (Path(__file__).resolve().parent / "kv_url.txt").read_text().splitlines():
+                line = line.strip()
+                if line and not line.startswith("#"):
+                    url = line
+                    break
+        except OSError:
+            pass
+    if not url:
         return None
     if url.startswith("valkeys://"):
         url = "rediss://" + url[len("valkeys://"):]

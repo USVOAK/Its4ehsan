@@ -6,6 +6,7 @@ Core supports (MTProto is not part of Lunel Core v1).
 from __future__ import annotations
 
 import base64
+import os
 from urllib.parse import quote
 
 from .relay.shadowsocks import DEFAULT_CIPHER, generate_ss_link
@@ -23,12 +24,16 @@ def _with_prefix(link: Link, prefix: str) -> Link:
     return clone
 
 
-def generate_share_link(link: Link, host: str, remark_prefix: str = "Lunel",
+def generate_share_link(link: Link, host: str, remark_prefix: str | None = None,
                         path_prefix: str = "") -> str:
     """Build a client import URL. ``path_prefix`` (e.g. ``/i/<token>``) is
     prepended to every transport path so the link routes through the
     Console's public endpoint on platforms exposing a single domain."""
-    remark = f"{remark_prefix}-{link.label}"
+    if remark_prefix is None:
+        # Config names show exactly what the operator typed. Set
+        # LUNEL_REMARK_PREFIX (e.g. "MyBrand") to prepend a prefix again.
+        remark_prefix = os.environ.get("LUNEL_REMARK_PREFIX", "").strip()
+    remark = f"{remark_prefix}-{link.label}" if remark_prefix else link.label
     p = path_prefix.rstrip("/")
     proto = link.protocol
     if proto == "vmess-ws":

@@ -1,0 +1,1 @@
+redis://default:gQAAAAAABPQzAAIgcDFmNjA1ZjdlNTkzNWI0YThkYWMwNzc4ZDk1NWU3ODkzOA@normal-yak-324659.upstash.io:6379

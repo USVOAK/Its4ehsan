@@ -191,7 +191,6 @@ def setup() -> None:
               file=sys.stderr)
     os.environ["LUNEL_SECRET_KEY"] = ensure_secret_key()
     os.environ.setdefault("LUNEL_WORKER_TOKEN", secrets.token_urlsafe(32))
-    os.environ.setdefault("LUNEL_PUBLIC_URL", f"http://127.0.0.1:{port}")
     os.environ.setdefault("LUNEL_NODE_ID", "local")
     os.environ.setdefault("LUNEL_NODE_REGION", "local")
 
@@ -237,7 +236,8 @@ def setup() -> None:
 
     # ---- console app on sys.path -------------------------------------------
     sys.path.insert(0, str(ROOT / "console" / "api"))
-    print(f"[lunel] console : {os.environ['LUNEL_PUBLIC_URL']} (public port {port})")
+    print(f"[lunel] console : {os.environ.get('LUNEL_PUBLIC_URL') or 'auto (from request headers)'} "
+          f"(public port {port})")
     print(f"[lunel] worker  : internal on 127.0.0.1:{worker_port} "
           f"(process driver, data={data_root})")
     if not (os.environ.get("LUNEL_GITHUB_CLIENT_ID") and os.environ.get("LUNEL_GITHUB_CLIENT_SECRET")):
